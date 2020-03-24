@@ -1,5 +1,6 @@
 import math
 import random
+import time
 from typing import List, Any
 
 NUM_TRAIN = 1000
@@ -12,7 +13,7 @@ class BinaryClassifier:
         self.w1, self.w2, self.b = (0, 0, 0)
 
     @staticmethod
-    def generate_data(size: int):
+    def generate_data(size):
         datalist: List[{}] = []
         for i in range(size):
             data = {'x1': random.randint(-10, 10), 'x2': random.randint(-10, 10)}
@@ -23,47 +24,57 @@ class BinaryClassifier:
             datalist.append(data)
         return datalist
 
-    def train(self, datalist, learning_rate):
-        dw1, dw2, db = (0, 0, 0)
-        for data in datalist:
-            l = self.loss([data])
-            da = -data['y'] / self.a + (1 - data['y']) / (1 - self.a)
-            dz = self.a * (1 - self.a) * da
-            dw1 += data['x1'] * dz
-            dw2 += data['x2'] * dz
-            db += 1 * dz
-        dw1 /= len(datalist)
-        dw2 /= len(datalist)
-        db /= len(datalist)
-        self.w1 -= learning_rate * dw1
-        self.w2 -= learning_rate * dw2
-        self.b -= learning_rate * db
+    def __forward__(self, x1, x2):
+        self.z = self.w1 * x1 + self.w2 * x2 + self.b
+        self.a = 1 / (1 + math.exp(-self.z))
+        MIN_VAL = 1e-10
+        self.a = max(self.a, MIN_VAL)
+        self.a = min(self.a, 1 - MIN_VAL)
+        return self.a
 
-    def __sigmoid__(self, val):
-        return 1 / (1 + math.exp(-val))
+    def __backward__(self, data):
+        da = -data['y'] / self.a + (1 - data['y']) / (1 - self.a)
+        dz = self.a * (1 - self.a) * da
+        dw1 = data['x1'] * dz
+        dw2 = data['x2'] * dz
+        db = 1 * dz
+        return dw1, dw2, db
+
+    def train(self, datalist, learning_rate):
+        batch_dw1, batch_dw2, batch_db = (0, 0, 0)
+        for data in datalist:
+            self.__forward__(data['x1'], data['x2'])
+            dw1, dw2, db = self.__backward__(data)
+            batch_dw1 += dw1 / len(datalist)
+            batch_dw2 += dw2 / len(datalist)
+            batch_db += db / len(datalist)
+
+        self.w1 -= learning_rate * batch_dw1
+        self.w2 -= learning_rate * batch_dw2
+        self.b -= learning_rate * batch_db
 
     def predict(self, x1, x2):
-        self.z = self.w1 * x1 + self.w2 * x2 + self.b
-        self.a = self.__sigmoid__(self.z)
-        return self.a
+        return round(classifier.__forward__(x1, x2))
 
     # Compute cross-entropy loss.
     def loss(self, datalist):
-        y = 0
+        batch_loss = 0
         for data in datalist:
-            pred_y = self.predict(data['x1'], data['x2'])
-            y -= data['y'] * math.log(pred_y) + (1 - data['y']) * math.log(1 - pred_y)
-        y /= len(datalist)
-        return y
+            pred_y = self.__forward__(data['x1'], data['x2'])
+            batch_loss -= data['y'] * math.log(pred_y) + (1 - data['y']) * math.log(1 - pred_y)
+        batch_loss /= len(datalist)
+        return batch_loss
 
 
 classifier = BinaryClassifier()
-train_data = classifier.generate_data(1000)
-test_data = classifier.generate_data(100)
+train_data = classifier.generate_data(NUM_TRAIN)
+test_data = classifier.generate_data(NUM_TEST)
+
+start = time.time()
 
 for iteration in range(101):
     if iteration:
-        classifier.train(train_data, 1e-1)
+        classifier.train(train_data, 1e-2)
     print('===== Iteration #' + str(iteration) + " =====")
     print('w1 = ' + str(classifier.w1) + ', w2 = ' + str(classifier.w2) + ', b = ' + str(classifier.b))
     print('train loss = ' + str(classifier.loss(train_data)))
@@ -71,11 +82,14 @@ for iteration in range(101):
     print('train accuracy = ', end='')
     num_correct = 0
     for data in train_data:
-        num_correct += (round(classifier.predict(data['x1'], data['x2'])) == data['y'])
+        num_correct += (classifier.predict(data['x1'], data['x2']) == data['y'])
     print(str(num_correct * 100 / len(train_data)) + '%')
     print('test accuracy = ', end='')
     num_correct = 0
     for data in test_data:
-        num_correct += (round(classifier.predict(data['x1'], data['x2'])) == data['y'])
+        num_correct += (classifier.predict(data['x1'], data['x2']) == data['y'])
     print(str(num_correct * 100 / len(test_data)) + '%')
     print()
+
+end = time.time()
+print('Time elapsed: ' + str(end - start) + 's')
