@@ -5,8 +5,8 @@ import time
 DIM_X = 2           # Dimension of data
 NUM_TRAIN = 1000    # Number of train data
 NUM_TEST = 100      # Number of test data
-LEARN_RATE = 1e-2   # Learning rate
-NUM_ITER = 100      # Number of iterations
+LEARN_RATE = 1e-5   # Learning rate
+NUM_ITER = 10       # Number of iterations
 
 
 class BinaryClassifier:
@@ -24,6 +24,8 @@ class BinaryClassifier:
     def __forward__(self, X):
         self.z = np.dot(X, self.w.T) + self.b   # (N, 1)
         self.a = 1 / (1 + np.exp(-self.z))   # (N, 1)
+        MIN_MARGIN = 2**-53
+        self.a = np.maximum(MIN_MARGIN, np.minimum(1 - MIN_MARGIN, self.a))
         return self.a
 
     def __backward__(self, X, y):
@@ -37,7 +39,7 @@ class BinaryClassifier:
         self.__forward__(X)
         dw, db = self.__backward__(X, y)
         self.w -= learning_rate * np.mean(dw, 0)
-        self.b -= learning_rate * np.mean(db, 0)
+        self.b -= learning_rate * np.mean(db)
 
     def predict(self, X):
         return np.round(self.__forward__(X))
@@ -55,7 +57,7 @@ start = time.time()
 
 for iteration in range(NUM_ITER + 1):
     if iteration:
-        classifier.train(train_X, train_y, 1e-1)
+        classifier.train(train_X, train_y, LEARN_RATE)
     print('===== Iteration #' + str(iteration) + " =====")
     for i in range(classifier.w.shape[1]):
         print('w' + str(i + 1) + ' = ' + str(classifier.w[0][i]))
