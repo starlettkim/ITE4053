@@ -66,30 +66,35 @@ class BinaryClassifier:
         return batch_loss
 
 
-classifier = BinaryClassifier()
-train_data = classifier.generate_data(NUM_TRAIN)
-test_data = classifier.generate_data(NUM_TEST)
+def train_binary_classifier(num_train, num_test, num_iter, learn_rate):
+    classifier = BinaryClassifier()
+    train_data = classifier.generate_data(num_train)
+    for iteration in range(num_iter):
+        classifier.train(train_data, learn_rate)
 
-start = time.time()
 
-for iteration in range(101):
-    if iteration:
-        classifier.train(train_data, 1e-1)
-    print('===== Iteration #' + str(iteration) + " =====")
-    print('w1 = ' + str(classifier.w1) + ', w2 = ' + str(classifier.w2) + ', b = ' + str(classifier.b))
-    print('train loss = ' + str(classifier.loss(train_data)))
-    print('test loss = ' + str(classifier.loss(test_data)))
-    print('train accuracy = ', end='')
-    num_correct = 0
-    for data in train_data:
-        num_correct += (classifier.predict(data['x1'], data['x2']) == data['y'])
-    print(str(num_correct * 100 / len(train_data)) + '%')
-    print('test accuracy = ', end='')
-    num_correct = 0
-    for data in test_data:
-        num_correct += (classifier.predict(data['x1'], data['x2']) == data['y'])
-    print(str(num_correct * 100 / len(test_data)) + '%')
-    print()
-
-end = time.time()
-print('Time elapsed: ' + str(end - start) + 's')
+if __name__ == '__main__':
+    classifier = BinaryClassifier()
+    train_data = classifier.generate_data(NUM_TRAIN)
+    test_data = classifier.generate_data(NUM_TEST)
+    start = time.time()
+    for iteration in range(1001):
+        if iteration:
+            classifier.train(train_data, 1e-2)
+        print('===== Iteration #' + str(iteration) + " =====")
+        print('w1 = ' + str(classifier.w1) + ', w2 = ' + str(classifier.w2) + ', b = ' + str(classifier.b))
+        print('train loss = ' + str(classifier.loss(train_data)))
+        print('test loss = ' + str(classifier.loss(test_data)))
+        print('train accuracy = ', end='')
+        num_correct = 0
+        for data in train_data:
+            num_correct += (classifier.predict(data['x1'], data['x2']) == data['y'])
+        print(str(num_correct * 100 / len(train_data)) + '%')
+        print('test accuracy = ', end='')
+        num_correct = 0
+        for data in test_data:
+            num_correct += (classifier.predict(data['x1'], data['x2']) == data['y'])
+        print(str(num_correct * 100 / len(test_data)) + '%')
+        print()
+    end = time.time()
+    print('Time elapsed: ' + str(end - start) + 's')
