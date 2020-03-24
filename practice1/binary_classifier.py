@@ -54,7 +54,7 @@ class BinaryClassifier:
         self.b -= learning_rate * batch_db
 
     def predict(self, x1, x2):
-        return round(classifier.__forward__(x1, x2))
+        return round(self.__forward__(x1, x2))
 
     # Compute cross-entropy loss.
     def loss(self, datalist):
@@ -74,7 +74,7 @@ start = time.time()
 
 for iteration in range(101):
     if iteration:
-        classifier.train(train_data, 1e-2)
+        classifier.train(train_data, 1e-1)
     print('===== Iteration #' + str(iteration) + " =====")
     print('w1 = ' + str(classifier.w1) + ', w2 = ' + str(classifier.w2) + ', b = ' + str(classifier.b))
     print('train loss = ' + str(classifier.loss(train_data)))
