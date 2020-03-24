@@ -24,15 +24,28 @@ class BinaryClassifier:
         return datalist
 
     def train(self, datalist, learning_rate):
-        pass
+        dw1, dw2, db = (0, 0, 0)
+        for data in datalist:
+            l = self.loss([data])
+            da = -data['y'] / self.a + (1 - data['y']) / (1 - self.a)
+            dz = self.a * (1 - self.a) * da
+            dw1 += data['x1'] * dz
+            dw2 += data['x2'] * dz
+            db += 1 * dz
+        dw1 /= len(datalist)
+        dw2 /= len(datalist)
+        db /= len(datalist)
+        self.w1 -= learning_rate * dw1
+        self.w2 -= learning_rate * dw2
+        self.b -= learning_rate * db
 
     def __sigmoid__(self, val):
         return 1 / (1 + math.exp(-val))
 
     def predict(self, x1, x2):
-        pred_y = self.w1 * x1 + self.w2 * x2 + self.b
-        pred_y = self.__sigmoid__(pred_y)
-        return pred_y
+        self.z = self.w1 * x1 + self.w2 * x2 + self.b
+        self.a = self.__sigmoid__(self.z)
+        return self.a
 
     # Compute cross-entropy loss.
     def loss(self, datalist):
@@ -50,7 +63,7 @@ test_data = classifier.generate_data(100)
 
 for iteration in range(101):
     if iteration:
-        classifier.train(train_data, 1e-2)
+        classifier.train(train_data, 1e-1)
     print('===== Iteration #' + str(iteration) + " =====")
     print('w1 = ' + str(classifier.w1) + ', w2 = ' + str(classifier.w2) + ', b = ' + str(classifier.b))
     print('train loss = ' + str(classifier.loss(train_data)))
