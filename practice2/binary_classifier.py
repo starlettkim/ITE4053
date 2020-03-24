@@ -29,7 +29,6 @@ class BinaryClassifier:
     def __backward__(self, X, y):
         da = -y / self.a + (1 - y) / (1 - self.a)   # (N, 1)
         dz = self.a * (1 - self.a) * da     # (N, 1)
-        print(self.a.shape)
         dw = X * dz     # (N, D)
         db = 1 * dz     # (N, 1)
         return dw, db
@@ -37,10 +36,15 @@ class BinaryClassifier:
     def train(self, X, y, learning_rate):
         self.__forward__(X)
         dw, db = self.__backward__(X, y)
-        dw = np.mean(dw, 0)  # (1, D)
-        db = np.mean(db, 0)  # (1, 1)
-        self.w -= learning_rate * dw
-        self.b -= learning_rate * db
+        self.w -= learning_rate * np.mean(dw, 0)
+        self.b -= learning_rate * np.mean(db, 0)
+
+    def predict(self, X):
+        return np.round(self.__forward__(X))
+
+    def loss(self, X, y):
+        pred_y = self.__forward__(X)
+        return -np.mean(y * np.log(pred_y) + (1 - y) * np.log(1 - pred_y))
 
 
 classifier = BinaryClassifier()
@@ -51,11 +55,16 @@ start = time.time()
 
 for iteration in range(NUM_ITER + 1):
     if iteration:
-        classifier.train(train_X, train_y, 1e-2)
+        classifier.train(train_X, train_y, 1e-1)
     print('===== Iteration #' + str(iteration) + " =====")
     for i in range(classifier.w.shape[1]):
         print('w' + str(i + 1) + ' = ' + str(classifier.w[0][i]))
     print('b = ' + str(classifier.b))
+    print('Train loss = ' + str(classifier.loss(train_X, train_y)))
+    print('Test loss = ' + str(classifier.loss(test_X, test_y)))
+    print('Train accuracy = ' + str(100 * np.mean(classifier.predict(train_X) == train_y)) + '%')
+    print('Test accuracy = ' + str(100 * np.mean(classifier.predict(test_X) == test_y)) + '%')
+    print()
 
 end = time.time()
 print('Time elapsed: ' + str(end - start) + 's')
