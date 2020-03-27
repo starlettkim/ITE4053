@@ -3,12 +3,13 @@ import time
 
 if __name__ == '__main__':
     NUM_RUN = 100
-    LEARN_RATE = 1e-6
+    LEARN_RATE = 1e-3
     print('Running tests...')
     print('# of runs per test: %d' % NUM_RUN)
     print('Learning rate: %e\n' % LEARN_RATE)
 
-    for m, K in [(10, 100), (100, 100), (1000, 100)]:
+    params = [(10, 100), (100, 100), (1000, 100), (100, 10), (100, 100), (100, 1000)]
+    for m, K in params:
         train_acc, test_acc = (0, 0)
         time_start = time.time()
         for test in range(NUM_RUN):

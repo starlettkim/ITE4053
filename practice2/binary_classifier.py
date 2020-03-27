@@ -4,8 +4,8 @@ import time
 DIM_X = 2  # Dimension of data
 NUM_TRAIN = 1000  # Number of train data
 NUM_TEST = 100  # Number of test data
-LEARN_RATE = 10  # Learning rate
-NUM_ITER = 1000  # Number of iterations
+LEARN_RATE = 1e-2  # Learning rate
+NUM_ITER = 100  # Number of iterations
 
 
 class BinaryClassifier:
