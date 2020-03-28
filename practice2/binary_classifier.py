@@ -2,43 +2,39 @@ import numpy as np
 import time
 
 DIM_X = 2  # Dimension of data
-NUM_TRAIN = 1000  # Number of train data
-NUM_TEST = 100  # Number of test data
-LEARN_RATE = 1e-2  # Learning rate
-NUM_ITER = 100  # Number of iterations
 
 
 class BinaryClassifier:
 
     def __init__(self):
-        self.w = np.zeros((1, DIM_X))  # (1, D)
+        self.w = np.zeros((1, DIM_X), dtype=np.float64)  # (1,D)
         self.b = 0
 
     @staticmethod
     def generate_data(size):
-        X = 20 * np.random.rand(size, DIM_X) - 10  # (N, D)
-        y = (np.sum(X, 1) > 0).astype(int).reshape(size, 1)  # (N, 1)
+        X = np.random.randint(-10, 11, (size, DIM_X))   # (N,D)
+        y = (np.sum(X, 1) > 0).astype(int)  # (N,)
         return X, y
 
     def __forward__(self, X):
-        self.z = np.dot(X, self.w.T) + self.b  # (N, 1)
-        self.a = 1 / (1 + np.exp(-self.z))  # (N, 1)
+        self.z = np.dot(self.w, X.T) + self.b  # (1,N)
+        self.a = 1 / (1 + np.exp(-self.z))  # (1,N)
         MIN_MARGIN = 2 ** -53
         self.a = np.maximum(MIN_MARGIN, np.minimum(1 - MIN_MARGIN, self.a))
         return self.a
 
     def __backward__(self, X, y):
-        da = -y / self.a + (1 - y) / (1 - self.a)  # (N, 1)
-        dz = self.a * (1 - self.a) * da  # (N, 1)
-        dw = X * dz  # (N, D)
-        db = 1 * dz  # (N, 1)
+        da = -y / self.a + (1 - y) / (1 - self.a)  # (1,N)
+        dz = self.a * (1 - self.a) * da  # (1,N)
+        dw = np.mean(X * dz.T, 0)  # (D,)
+        db = np.mean(1 * dz)
         return dw, db
 
     def train(self, X, y, learning_rate):
         self.__forward__(X)
         dw, db = self.__backward__(X, y)
-        self.w -= learning_rate * np.mean(dw, 0)
-        self.b -= learning_rate * np.mean(db)
+        self.w -= learning_rate * dw
+        self.b -= learning_rate * db
 
     def predict(self, X):
         return np.round(self.__forward__(X))
@@ -62,6 +58,11 @@ def train_binary_classifier(num_train, num_test, num_iter, learn_rate):
 
 
 if __name__ == '__main__':
+    NUM_TRAIN = 1000  # Number of train data
+    NUM_TEST = 100  # Number of test data
+    LEARN_RATE = 1e-2  # Learning rate
+    NUM_ITER = 1000  # Number of iterations
+
     classifier = BinaryClassifier()
     train_X, train_y = classifier.generate_data(NUM_TRAIN)
     test_X, test_y = classifier.generate_data(NUM_TEST)

@@ -3,7 +3,7 @@ import time
 
 if __name__ == '__main__':
     NUM_RUN = 100
-    LEARN_RATE = 1e-3
+    LEARN_RATE = 1e-1
     print('Running tests...')
     print('# of runs per test: %d' % NUM_RUN)
     print('Learning rate: %e\n' % LEARN_RATE)
@@ -12,8 +12,9 @@ if __name__ == '__main__':
     for m, K in params:
         train_acc, test_acc = (0, 0)
         time_start = time.time()
+        result = {}
         for test in range(NUM_RUN):
-            result = train_binary_classifier(m, 100, K, 1e-7)
+            result = train_binary_classifier(m, 100, K, LEARN_RATE)
             train_acc += result['train_acc'] / NUM_RUN
             test_acc += result['test_acc'] / NUM_RUN
         time_elapsed = time.time() - time_start
