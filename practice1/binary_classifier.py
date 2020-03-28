@@ -69,8 +69,15 @@ class BinaryClassifier:
 def train_binary_classifier(num_train, num_test, num_iter, learn_rate):
     classifier = BinaryClassifier()
     train_data = classifier.generate_data(num_train)
+    test_data = classifier.generate_data(num_test)
     for iteration in range(num_iter):
         classifier.train(train_data, learn_rate)
+    ret = {'w1': classifier.w1, 'w2': classifier.w2, 'b': classifier.b, 'train_acc': 0, 'test_acc': 0}
+    for data in train_data:
+        ret['train_acc'] += (classifier.predict(data['x1'], data['x2']) == data['y']) / len(train_data)
+    for data in test_data:
+        ret['test_acc'] += (classifier.predict(data['x1'], data['x2']) == data['y']) / len(test_data)
+    return ret
 
 
 if __name__ == '__main__':
