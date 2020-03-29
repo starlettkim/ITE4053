@@ -50,7 +50,7 @@ def train_binary_classifier(num_train, num_test, num_iter, learn_rate):
     test_X, test_y = classifier.generate_data(num_test)
     for iteration in range(num_iter):
         classifier.train(train_X, train_y, learn_rate)
-    return {'w': classifier.w, 'b': classifier.b,
+    return {'w': classifier.w.reshape(DIM_X), 'b': classifier.b,
             'train_loss': classifier.loss(train_X, train_y),
             'test_loss': classifier.loss(test_X, test_y),
             'train_acc': 100 * np.mean(classifier.predict(train_X) == train_y),
