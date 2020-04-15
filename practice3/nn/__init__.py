@@ -1,2 +1,3 @@
-from .layers import *
-from .model import *
+import nn.model
+from .layers import Layer
+from .activations import Activation
