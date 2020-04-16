@@ -19,15 +19,19 @@ def bce_loss(y_hat: np.ndarray,
 
 
 if __name__ == '__main__':
-    model = nn.model.Sequential(
-        [nn.layers.Dense(2, 1, nn.activations.Sigmoid)],
-        bce_loss
-    )
+    model = nn.model.Sequential([
+        nn.layers.Dense(2, 1, nn.activations.Sigmoid),
+        nn.layers.Dense(1, 1, nn.activations.Sigmoid)
+    ])
 
-    train_X, train_y = generate_data(-2, 3, (2, 1000))
+    train_X, train_y = generate_data(-2, 3, (2, 10))
     test_X, text_y = generate_data(-2, 3, (2, 100))
 
+    print(model.forward(train_X))
+
+'''
     iters = 100
     for i in range(iters):
         model.fit(train_X, train_y)
         print(model.evaluate())
+'''

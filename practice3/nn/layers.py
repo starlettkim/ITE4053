@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Type
 
 import numpy as np
 from .activations import *
@@ -7,11 +7,12 @@ from .activations import *
 class Layer(object):
     def __init__(self,
                  input_dim: int, output_dim: int,
-                 activation: Optional[Activation] = None,
+                 activation: Optional[Type[Activation]] = None,
                  dropout_rate: Optional[int] = 0):
         self.input_dim = input_dim
         self.output_dim = output_dim
-        self.activation = activation
+        if activation is not None:
+            self.activation = activation()
         self.dropout_rate = dropout_rate
 
         self.dW, self.db = 0, 0
@@ -21,7 +22,8 @@ class Layer(object):
             -> np.ndarray:
         pass
 
-    def backward(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) \
+            -> np.ndarray:
         pass
 
     def update(self):
@@ -31,7 +33,7 @@ class Layer(object):
 class Dense(Layer):
     def __init__(self,
                  input_dim: int, output_dim: int,
-                 activation: Optional[type(Activation)] = None,
+                 activation: Optional[Type[Activation]] = None,
                  dropout_rate: Optional[int] = 0):
         super().__init__(input_dim, output_dim,
                          activation,
@@ -43,6 +45,8 @@ class Dense(Layer):
     def forward(self, x: np.ndarray) \
             -> np.ndarray:
         self.y = np.dot(self.weights, x) + self.bias
+        if hasattr(self, 'activation'):
+            self.y = self.activation.forward(self.y)
         return self.y
 
     def backward(self, grad: np.ndarray) \
