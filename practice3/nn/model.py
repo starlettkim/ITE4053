@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 import numpy as np
 import nn
@@ -6,7 +6,6 @@ import nn
 
 class Model(object):
     def __init__(self):
-        self.loss = Callable[[np.ndarray, np.ndarray], float]
         pass
 
     def fit(self,
@@ -14,7 +13,6 @@ class Model(object):
             loss: Callable[[np.ndarray, np.ndarray], float]
             ) \
             -> None:
-        self.loss = loss
         pass
 
     # Evaluate model on dataset.
@@ -38,18 +36,16 @@ class Sequential(Model):
 
     def fit(self,
             x: np.ndarray, y: np.ndarray,
-            loss: Callable[[np.ndarray, np.ndarray], float]) \
+            loss: Callable[[np.ndarray, np.ndarray], float],
+            lr: Optional[float] = 1e-6) \
             -> None:
-        pass
-        '''
         y_hat = self.forward(x)
-        l = self.loss(y_hat, y)
+        grad = loss(y_hat, y)
         for layer in reversed(self.layers):
-            l = layer.backward(l)
-            layer.update()
-            '''
+            grad = layer.backward(grad)
+            layer.update(lr)
 
     def evaluate(self, x: np.ndarray, y: np.ndarray) \
             -> float:
         y_hat = self.forward(x)
-        return self.loss(y_hat, y)
+        return 1

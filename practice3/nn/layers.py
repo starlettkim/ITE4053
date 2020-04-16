@@ -15,8 +15,9 @@ class Layer(object):
             self.activation = activation()
         self.dropout_rate = dropout_rate
 
-        self.dW, self.db = 0, 0
-        self.y = 0
+        self.dw = np.ndarray
+        self.db = np.ndarray
+        self.x = np.ndarray
 
     def forward(self, x: np.ndarray) \
             -> np.ndarray:
@@ -26,7 +27,7 @@ class Layer(object):
             -> np.ndarray:
         pass
 
-    def update(self):
+    def update(self, lr: float):
         pass
 
 
@@ -39,20 +40,26 @@ class Dense(Layer):
                          activation,
                          dropout_rate)
 
-        self.weights = np.random.randn(output_dim, input_dim) * .1
-        self.bias = np.random.randn(output_dim, 1) * .1
+        self.weights = np.zeros((output_dim, input_dim))
+        self.bias = np.zeros((output_dim, 1))
 
     def forward(self, x: np.ndarray) \
             -> np.ndarray:
-        self.y = np.dot(self.weights, x) + self.bias
+        self.x = x.copy()
+        y = np.dot(self.weights, x) + self.bias
         if hasattr(self, 'activation'):
-            self.y = self.activation.forward(self.y)
-        return self.y
+            y = self.activation.forward(y)
+        return y
 
     def backward(self, grad: np.ndarray) \
             -> np.ndarray:
-        pass
+        if hasattr(self, 'activation'):
+            grad = self.activation.backward(grad)
+        self.dw = np.dot(grad, self.x.T) / self.x.shape[-1]
+        self.db = grad.sum(axis=-1, keepdims=True) / self.x.shape[-1]
+        return np.dot(self.weights.T, grad)
 
-    def update(self) \
+    def update(self, lr: float) \
             -> None:
-        pass
+        self.weights -= lr * self.dw
+        self.bias -= lr * self.db

@@ -8,7 +8,7 @@ def generate_data(low: int, high: int,
                   shape: Tuple[int, int]) \
         -> Tuple[np.ndarray, np.ndarray]:
     X = np.random.randint(low, high, shape)
-    y = (np.sum(X, 0) > 0).astype(int)
+    y = (X.sum(axis=0, keepdims=True) > 0).astype(int)
     return X, y
 
 
@@ -20,14 +20,15 @@ def bce_loss(y_hat: np.ndarray,
 
 if __name__ == '__main__':
     model = nn.model.Sequential([
-        nn.layers.Dense(2, 1, nn.activations.Sigmoid),
-        nn.layers.Dense(1, 1, nn.activations.Sigmoid)
+        nn.layers.Dense(2, 1, nn.activations.Sigmoid)
     ])
 
-    train_X, train_y = generate_data(-2, 3, (2, 10))
-    test_X, text_y = generate_data(-2, 3, (2, 100))
+    train_X, train_y = generate_data(-10, 11, (2, 1000))
+    test_X, text_y = generate_data(-10, 11, (2, 100))
 
-    print(model.forward(train_X))
+    for _ in range(100):
+        model.fit(train_X, train_y, bce_loss, lr=1)
+    print(np.mean(np.round(model.forward(train_X)) == train_y))
 
 '''
     iters = 100
