@@ -36,11 +36,11 @@ class Sequential(Model):
 
     def fit(self,
             x: np.ndarray, y: np.ndarray,
-            loss: Callable[[np.ndarray, np.ndarray], float],
+            loss: nn.Loss,
             lr: Optional[float] = 1e-6) \
             -> None:
         y_hat = self.forward(x)
-        grad = loss(y_hat, y)
+        grad = loss.backward(y, y_hat)
         for layer in reversed(self.layers):
             grad = layer.backward(grad)
             layer.update(lr)

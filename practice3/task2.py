@@ -13,15 +13,16 @@ def generate_data(low: int, high: int,
 
 
 if __name__ == '__main__':
-    model = nn.model.Sequential([
-        nn.layers.Dense(2, 1, nn.activations.Sigmoid)
-    ])
-
     train_X, train_y = generate_data(-10, 11, (2, 1000))
     test_X, text_y = generate_data(-10, 11, (2, 100))
 
+    model = nn.model.Sequential([
+        nn.layers.Dense(2, 1, nn.activations.Sigmoid)
+    ])
+    loss = nn.loss.BCE()
+
     for _ in range(100):
-        model.fit(train_X, train_y, bce_loss, lr=1)
+        model.fit(train_X, train_y, loss, lr=1e-3)
     print(np.mean(np.round(model.forward(train_X)) == train_y))
 
 '''
