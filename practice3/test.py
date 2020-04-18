@@ -1,5 +1,5 @@
 import time
-from typing import List, Dict
+from typing import List, Dict, Iterable
 from tqdm import trange
 
 import nn
@@ -10,10 +10,12 @@ import task3
 
 
 def test_models(models: List[nn.Model],
+                train_shape: Iterable[int],
+                test_shape: Iterable[int],
                 lr: float,
                 epochs: int,
                 num_run: int) \
-        -> List[Dict[str, float]]:
+        -> None:
     results = [{}] * len(models)
     for i in range(len(models)):
         results[i] = {
@@ -25,11 +27,17 @@ def test_models(models: List[nn.Model],
             'acc_test': 0.
         }
 
+    print()
+    print('Running %d tests on %d model%s, with:' % (num_run, len(models), ('s' if len(models) > 1 else '')))
+    print('# of train data: %s' % train_shape[-1])
+    print('# of test data:  %s' % test_shape[-1])
+    print('Learning rate:   %f' % lr)
+    print('# of epochs:     %d\n' % epochs)
+
     t = trange(num_run)
-    t.set_description('Running tests on %d model(s)' % len(models))
     for _ in t:
-        train_x, train_y = generate_data(-2, 2, (2, 1000))
-        test_x, test_y = generate_data(-2, 2, (2, 100))
+        train_x, train_y = generate_data(-2, 2, train_shape)
+        test_x, test_y = generate_data(-2, 2, test_shape)
 
         for idx, model in enumerate(models):
             model.init()
@@ -52,17 +60,18 @@ def test_models(models: List[nn.Model],
             results[idx]['loss_test'] += loss_test
             results[idx]['acc_test'] += acc_test
 
-    for result in results:
-        for key, val in result.items():
-            result[key] = val / num_run
+    print()
 
-    return results
+    for i, result in enumerate(results):
+        if len(models) > 1:
+            print('Model #%d' % (i + 1))
+        for key, val in result.items():
+            print('%s: %f' % (key, val / num_run))
+        print()
 
 
 if __name__ == '__main__':
-    results = test_models([task1.model, task2.model, task3.model], 1, 1000, 100)
-    for i, result in enumerate(results):
-        print('model #%d' % (i + 1))
-        for item in result.items():
-            print('%s: %f' % item)
-        print()
+    test_models([task1.model, task2.model, task3.model],
+                train_shape=(2, 1000),
+                test_shape=(2, 100),
+                lr=1, epochs=1000, num_run=100)
