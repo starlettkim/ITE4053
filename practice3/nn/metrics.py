@@ -2,6 +2,8 @@ import numpy as np
 
 
 class Metric(object):
+    name = ''
+
     @classmethod
     def compute(cls,
                 y: np.ndarray,

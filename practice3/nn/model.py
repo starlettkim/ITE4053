@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional
+from typing import List, Optional, Type, Dict
 
 import numpy as np
 import nn
@@ -10,14 +10,10 @@ class Model(object):
 
     def fit(self,
             x: np.ndarray, y: np.ndarray,
-            loss: Callable[[np.ndarray, np.ndarray], float]
-            ) \
+            loss: Type[nn.Loss],
+            lr: Optional[float],
+            epochs: int) \
             -> None:
-        pass
-
-    # Evaluate model on dataset.
-    def evaluate(self, x: np.ndarray, y: np.ndarray) \
-            -> float:
         pass
 
 
@@ -36,16 +32,23 @@ class Sequential(Model):
 
     def fit(self,
             x: np.ndarray, y: np.ndarray,
-            loss: nn.Loss,
-            lr: Optional[float] = 1e-6) \
+            loss: Type[nn.Loss],
+            lr: Optional[float] = 1e-6,
+            epochs: int = 1) \
             -> None:
-        y_hat = self.forward(x)
-        grad = loss.backward(y, y_hat)
-        for layer in reversed(self.layers):
-            grad = layer.backward(grad)
-            layer.update(lr)
+        for _ in range(epochs):
+            y_hat = self.forward(x)
+            grad = loss.backward(y, y_hat)
+            for layer in reversed(self.layers):
+                grad = layer.backward(grad)
+                layer.update(lr)
 
-    def evaluate(self, x: np.ndarray, y: np.ndarray) \
-            -> float:
+    def eval(self,
+             x: np.ndarray, y: np.ndarray,
+             metrics: List[Type[nn.Metric]]) \
+            -> List[float]:
         y_hat = self.forward(x)
-        return 1
+        result = []
+        for metric in metrics:
+            result.append(metric.compute(y, y_hat))
+        return result

@@ -1,33 +1,24 @@
-from typing import Tuple
-
 import nn
-import numpy as np
-
-
-def generate_data(low: int, high: int,
-                  shape: Tuple[int, int]) \
-        -> Tuple[np.ndarray, np.ndarray]:
-    X = np.random.randint(low, high, shape)
-    y = (X.sum(axis=0, keepdims=True) > 0).astype(int)
-    return X, y
+from data import train_x, train_y, test_x, test_y
 
 
 if __name__ == '__main__':
-    train_X, train_y = generate_data(-10, 11, (2, 1000))
-    test_X, text_y = generate_data(-10, 11, (2, 100))
-
     model = nn.model.Sequential([
-        nn.layers.Dense(2, 1, nn.activations.Sigmoid)
+        nn.layers.Dense(2, 1, nn.activations.Sigmoid),
+        nn.layers.Dense(1, 1, nn.activations.Sigmoid)
     ])
-    loss = nn.loss.BCE()
+    loss = nn.loss.BinaryCrossentropy
 
-    for _ in range(100):
-        model.fit(train_X, train_y, loss, lr=1e-3)
-    print(np.mean(np.round(model.forward(train_X)) == train_y))
+    model.fit(train_x, train_y, loss, lr=1e-2, epochs=1000)
 
-'''
-    iters = 100
-    for i in range(iters):
-        model.fit(train_X, train_y)
-        print(model.evaluate())
-'''
+    train_loss, train_acc = model.eval(train_x, train_y,
+                                       [nn.metrics.BinaryCrossentropy, nn.metrics.BinaryAccuracy])
+    print('> Train Set')
+    print('Loss: %f' % train_loss)
+    print('Accuracy: %f\n' % train_acc)
+
+    test_loss, test_acc = model.eval(test_x, test_y,
+                                     [nn.metrics.BinaryCrossentropy, nn.metrics.BinaryAccuracy])
+    print('> Test Set')
+    print('Loss: %f' % test_loss)
+    print('Accuracy: %f\n' % test_acc)
