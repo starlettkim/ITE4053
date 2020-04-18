@@ -1,10 +1,14 @@
 import nn.activations
-import nn.layers
-import nn.metrics
-import nn.losses
+from nn.activations import Activation
 
+import nn.layers
 from nn.layers import Layer
-from nn.losses import Loss
+
+import nn.metrics
 from nn.metrics import Metric
 
-import nn.model
+import nn.losses
+from nn.losses import Loss
+
+import nn.models
+from nn.models import Model

@@ -2,7 +2,7 @@ import numpy as np
 import nn.metrics
 
 
-class Loss(nn.metrics.Metric):
+class Loss(nn.Metric):
     def __init__(self):
         pass
 

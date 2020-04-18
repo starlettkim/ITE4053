@@ -3,7 +3,7 @@ from data import train_x, train_y, test_x, test_y
 
 
 if __name__ == '__main__':
-    model = nn.model.Sequential([
+    model = nn.models.Sequential([
         nn.layers.Dense(2, 1, nn.activations.Sigmoid),
         nn.layers.Dense(1, 1, nn.activations.Sigmoid)
     ])
