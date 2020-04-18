@@ -15,10 +15,6 @@ class Layer(object):
             self.activation = activation()
         self.dropout_rate = dropout_rate
 
-        self.dw = np.ndarray
-        self.db = np.ndarray
-        self.x = np.ndarray
-
     def forward(self, x: np.ndarray) \
             -> np.ndarray:
         pass
@@ -27,7 +23,12 @@ class Layer(object):
             -> np.ndarray:
         pass
 
-    def update(self, lr: float):
+    def update(self, lr: float) \
+            -> None:
+        pass
+
+    def init(self) \
+            -> None:
         pass
 
 
@@ -39,13 +40,16 @@ class Dense(Layer):
         super().__init__(input_dim, output_dim,
                          activation,
                          dropout_rate)
+        self.dw = None
+        self.db = None
+        self.x = None
 
         self.weights = np.zeros((output_dim, input_dim))
         self.bias = np.zeros((output_dim, 1))
 
     def forward(self, x: np.ndarray) \
             -> np.ndarray:
-        self.x = x.copy()
+        self.x = x
         y = np.dot(self.weights, x) + self.bias
         if hasattr(self, 'activation'):
             y = self.activation.forward(y)
@@ -63,3 +67,8 @@ class Dense(Layer):
             -> None:
         self.weights -= lr * self.dw
         self.bias -= lr * self.db
+
+    def init(self) \
+            -> None:
+        self.weights = np.zeros((self.output_dim, self.input_dim))
+        self.bias = np.zeros((self.output_dim, 1))

@@ -11,8 +11,18 @@ class Model(object):
     def fit(self,
             x: np.ndarray, y: np.ndarray,
             loss: Type[nn.Loss],
-            lr: Optional[float],
-            epochs: int) \
+            lr: float,
+            epochs: Optional[int] = 1) \
+            -> None:
+        pass
+
+    def eval(self,
+             x: np.ndarray, y: np.ndarray,
+             metrics: List[Type[nn.Metric]]) \
+            -> List[float]:
+        pass
+
+    def init(self)\
             -> None:
         pass
 
@@ -33,8 +43,8 @@ class Sequential(Model):
     def fit(self,
             x: np.ndarray, y: np.ndarray,
             loss: Type[nn.Loss],
-            lr: Optional[float] = 1e-6,
-            epochs: int = 1) \
+            lr: float,
+            epochs: Optional[int] = 1) \
             -> None:
         for _ in range(epochs):
             y_hat = self.forward(x)
@@ -52,3 +62,8 @@ class Sequential(Model):
         for metric in metrics:
             result.append(metric.compute(y, y_hat))
         return result
+
+    def init(self)\
+            -> None:
+        for layer in self.layers:
+            layer.init()
