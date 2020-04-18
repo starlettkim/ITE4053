@@ -7,7 +7,7 @@ if __name__ == '__main__':
         nn.layers.Dense(2, 1, nn.activations.Sigmoid),
         nn.layers.Dense(1, 1, nn.activations.Sigmoid)
     ])
-    loss = nn.loss.BinaryCrossentropy
+    loss = nn.losses.BinaryCrossentropy
 
     model.fit(train_x, train_y, loss, lr=1e-2, epochs=1000)
 

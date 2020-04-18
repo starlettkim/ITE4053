@@ -1,10 +1,10 @@
 import nn.activations
 import nn.layers
-import nn.loss
 import nn.metrics
+import nn.losses
 
 from nn.layers import Layer
-from nn.loss import Loss
+from nn.losses import Loss
 from nn.metrics import Metric
 
 import nn.model

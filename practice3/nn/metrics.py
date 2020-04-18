@@ -1,4 +1,5 @@
 import numpy as np
+import nn
 
 
 class Metric(object):
@@ -31,5 +32,4 @@ class BinaryCrossentropy(Metric):
                 y: np.ndarray,
                 y_hat: np.ndarray) \
             -> float:
-        import nn.loss
-        return nn.loss.BinaryCrossentropy.compute(y, y_hat).mean()
+        return nn.losses.BinaryCrossentropy.compute(y, y_hat).mean()
