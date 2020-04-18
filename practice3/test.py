@@ -1,5 +1,6 @@
 import time
 from typing import List, Dict
+from tqdm import trange
 
 import nn
 from data import generate_data
@@ -24,7 +25,9 @@ def test_models(models: List[nn.Model],
             'acc_test': 0.
         }
 
-    for _ in range(num_run):
+    t = trange(num_run)
+    t.set_description('Running tests on %d model(s)' % len(models))
+    for _ in t:
         train_x, train_y = generate_data(-2, 2, (2, 1000))
         test_x, test_y = generate_data(-2, 2, (2, 100))
 
