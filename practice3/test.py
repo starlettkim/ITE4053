@@ -3,6 +3,9 @@ from typing import List, Dict
 
 import nn
 from data import generate_data
+import task1
+import task2
+import task3
 
 
 def test_models(models: List[nn.Model],
@@ -54,21 +57,7 @@ def test_models(models: List[nn.Model],
 
 
 if __name__ == '__main__':
-    models = [
-        nn.models.Sequential([
-            nn.layers.Dense(2, 1, nn.activations.Sigmoid)
-        ]),
-        nn.models.Sequential([
-            nn.layers.Dense(2, 1, nn.activations.Sigmoid),
-            nn.layers.Dense(1, 1, nn.activations.Sigmoid)
-        ]),
-        nn.models.Sequential([
-            nn.layers.Dense(2, 3, nn.activations.Sigmoid),
-            nn.layers.Dense(3, 1, nn.activations.Sigmoid)
-        ])
-    ]
-
-    results = test_models(models, 1, 1000, 10)
+    results = test_models([task1.model, task2.model, task3.model], 1, 1000, 100)
     for i, result in enumerate(results):
         print('model #%d' % (i + 1))
         for item in result.items():
