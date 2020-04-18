@@ -12,12 +12,6 @@ def generate_data(low: int, high: int,
     return X, y
 
 
-def bce_loss(y_hat: np.ndarray,
-             y: np.ndarray) \
-        -> float:
-    return -np.mean(y * np.log(y_hat) + (1 - y) * np.log(1 - y_hat))
-
-
 if __name__ == '__main__':
     model = nn.model.Sequential([
         nn.layers.Dense(2, 1, nn.activations.Sigmoid)
