@@ -41,4 +41,4 @@ class BinaryCrossentropy(Loss):
             -> np.ndarray:
         y_hat[y_hat == 0] += 2 ** -53
         y_hat[y_hat == 1] -= 2 ** -53
-        return -(y / y_hat - (1 - y) / y_hat)
+        return -y / y_hat + (1 - y) / (1 - y_hat)
