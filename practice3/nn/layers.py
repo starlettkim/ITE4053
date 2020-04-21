@@ -43,9 +43,9 @@ class Dense(Layer):
         self.dw = None
         self.db = None
         self.x = None
-
-        self.weights = np.zeros((output_dim, input_dim))
-        self.bias = np.zeros((output_dim, 1))
+        self.weights = None
+        self.bias = None
+        self.init()
 
     def forward(self, x: np.ndarray) \
             -> np.ndarray:
@@ -70,5 +70,5 @@ class Dense(Layer):
 
     def init(self) \
             -> None:
-        self.weights = np.zeros((self.output_dim, self.input_dim))
-        self.bias = np.zeros((self.output_dim, 1))
+        self.weights = np.random.randn(self.output_dim, self.input_dim)
+        self.bias = np.random.randn(self.output_dim, 1)

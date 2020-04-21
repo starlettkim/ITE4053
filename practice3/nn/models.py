@@ -63,7 +63,7 @@ class Sequential(Model):
             result.append(metric.compute(y, y_hat))
         return result
 
-    def init(self)\
+    def init(self) \
             -> None:
         for layer in self.layers:
             layer.init()
