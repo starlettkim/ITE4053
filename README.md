@@ -4,8 +4,10 @@
 
 - **Practice #1:** Implement binary classifier.  
   [[spec]](practice1/doc/spec.pdf) [[code]](practice1/)
-- **Practice #2:** Implement binary classifier using vectorization.  
+- **Practice #2:** Implement binary classifier using vectorization with NumPy.  
   [[spec]](practice2/doc/spec.pdf) [[report]](practice2/doc/report.pdf) [[code]](practice2/)
-- **Practice #3:** Implement binary classifier using 2-layered network.  
+- **Practice #3:** Implement binary classifier using 2-layered network with NumPy.  
   [[spec]](practice3/doc/spec.pdf) [[report]](practice3/doc/report.pdf) [[code]](practice3/)
+- **Practice #4:** Implement binary classifier with TensorFlow.   
+  [[spec]](practice4/doc/spec.pdf) [[report]](practice4/doc/report.pdf) [[code]](practice4/)
 
