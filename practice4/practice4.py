@@ -34,9 +34,9 @@ if __name__ == '__main__':
             tf.keras.layers.Dense(1, activation=tf.nn.sigmoid)
         ])
 
-        model.compile(optimizer=tf.keras.optimizers.Adam(.5),
-                      loss=tf.keras.losses.binary_crossentropy,
-                      metrics=[tf.keras.metrics.binary_accuracy])
+        model.compile(optimizer=tf.keras.optimizers.Adam(1),
+                      loss=tf.keras.losses.MeanSquaredError(),
+                      metrics=[tf.keras.metrics.BinaryAccuracy()])
 
         train_elapsed -= time.time() / num_runs
         result = model.fit(train_x, train_y,
