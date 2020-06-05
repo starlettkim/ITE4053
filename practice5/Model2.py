@@ -55,4 +55,4 @@ def main(train=False, test_img_path=None):
 
 
 if __name__ == '__main__':
-    main(True, 'noisy.png')
+    main(True, 'data/noisy.png')
